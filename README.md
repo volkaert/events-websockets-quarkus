@@ -24,6 +24,8 @@ Subscriptions do not know publications. The ony thing that publications and subs
 
 This demo uses Quarkus (www.quarkus.io) (and not SpringBoot). No special reason for that; it's just because I wanted to play with Quarkus !
 
+
+
 # In a nutshell
 
 Build and start the broker:
@@ -70,6 +72,7 @@ In the terminal of the publication for events of category `eventB`, type a messa
 Check the message is displayed in the terminals of the two subscriptions for events of category `eventB`. 
 
 
+
 # Pre-requisites
 
 ## Install WSCat
@@ -85,6 +88,7 @@ To run wscat, run:
 wscat -c ws://echo.websocket.org
 ```
 > Replace `ws://echo.websocket.org` by the actual endpoint of you websocket
+
 
 
 # Broker 
@@ -121,6 +125,7 @@ wscat -c localhost:8080/events/eventA/subscriptions
 Type some message in the terminal of the publication and check that the message is diplayed in the terminal of the subscription.  
 
 
+
 # Publisher 
 
 ## Build and start
@@ -144,13 +149,20 @@ java -jar target/events-websockets-quarkus-publisher-1.0-SNAPSHOT-runner.jar
 
 Publish an event using curl:
 ```
-curl -d '{"eventCode":"eventA", "publicationCode":"pubA1", "payload":"helloA"}' -H "Content-Type: application/json" -X POST http://localhost:8081/events
+curl -d '{"eventCode":"eventA", "payload":"helloA"}' -H "Content-Type: application/json" -X POST http://localhost:8081/events
 ```
 
 Publish an event using a browser (from the navigation bar of the browser):
 ```
-http://localhost:8081/events/eventA/publications/pubA1?payload=helloA
+http://localhost:8081/events/eventA/publications?payload=helloA
 ```
+
+After publishing the event, look at the logs displayed in the terminal(s) of the subscription(s).
+ 
+> You should start the subscriber before the publisher 
+otherwise you will not be able to see the event in the logs of the subscriber !
+
+
 
 # Subscriber 
 
@@ -175,12 +187,12 @@ java -jar target/events-websockets-quarkus-subscriber-1.0-SNAPSHOT-runner.jar
 
 Subscribe to an event category using curl:
 ```
-curl -X POST http://localhost:8082/events/eventA/subscriptions/subA1
+curl -X POST http://localhost:8082/events/eventA/subscriptions
 ```
 
 Subscribe to an event category using a browser (from the navigation bar of the browser):
 ```
-http://localhost:8082/events/eventA/subscriptions/subA1
+http://localhost:8082/events/eventA/subscriptions
 ```
 
 
