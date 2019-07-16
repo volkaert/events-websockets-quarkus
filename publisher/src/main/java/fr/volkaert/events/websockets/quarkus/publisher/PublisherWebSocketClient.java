@@ -10,13 +10,13 @@ public class PublisherWebSocketClient {
     private static final Logger LOG = Logger.getLogger(PublisherWebSocketClient.class);
 
     @OnOpen
-    public void onOpen(Session session) {
+    public void onOpen(Session session, EndpointConfig config) {
         LOG.info("Publication " + session.getId() + " joined");
     }
 
     @OnClose
-    public void onClose(Session session) {
-        LOG.info("Publication " + session.getId() + " left");
+    public void onClose(Session session, CloseReason reason) {
+        LOG.info("Publication " + session.getId() + " left for reason " + reason.getReasonPhrase());
     }
 
     @OnError

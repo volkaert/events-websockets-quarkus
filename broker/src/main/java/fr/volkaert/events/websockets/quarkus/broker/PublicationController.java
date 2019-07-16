@@ -18,13 +18,13 @@ public class PublicationController {
     SubscriptionController subscriptionController;
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("eventCode") String eventCode) {
+    public void onOpen(Session session, EndpointConfig config, @PathParam("eventCode") String eventCode) {
         LOG.info("Publication " + session.getId() + " for event " + eventCode + " joined");
     }
 
     @OnClose
-    public void onClose(Session session, @PathParam("eventCode") String eventCode) {
-        LOG.info("Publication " + session.getId() + " for event " + eventCode + " left");
+    public void onClose(Session session, CloseReason reason, @PathParam("eventCode") String eventCode) {
+        LOG.info("Publication " + session.getId() + " for event " + eventCode + " left for reason " + reason.getReasonPhrase());
     }
 
     @OnError

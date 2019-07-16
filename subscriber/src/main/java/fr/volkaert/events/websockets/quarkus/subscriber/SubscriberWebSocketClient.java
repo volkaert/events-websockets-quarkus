@@ -10,13 +10,13 @@ public class SubscriberWebSocketClient {
     private static final Logger LOG = Logger.getLogger(SubscriberWebSocketClient.class);
 
     @OnOpen
-    public void onOpen(Session session) {
+    public void onOpen(Session session, EndpointConfig config) {
         LOG.info("Subscription " + session.getId() + " joined");
     }
 
     @OnClose
-    public void onClose(Session session) {
-        LOG.info("Subscription " + session.getId() + " left");
+    public void onClose(Session session, CloseReason reason) {
+        LOG.info("Subscription " + session.getId() + " left for reason " + reason.getReasonPhrase());
     }
 
     @OnError
