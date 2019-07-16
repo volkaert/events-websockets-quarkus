@@ -14,12 +14,12 @@ An event has only one `eventCode` but multiple events can be sent with the same 
  
 - a publication sends events. 
 A publication sends events of a given category (events with a given`eventCode`).
-A publisher - a component of the system - can use multiple publications with one publication for each category of events. 
+A publisher - a component of the system - can use multiple publications, with one publication for each category of events. 
 Publications do not know subscriptions. The ony thing that publications and subscriptions share are the event categories (the `eventCode`).
        
 - a subscription receives events. 
 A subscription subscribes and receives events of a given category (events with a given`eventCode`).
-A subscriber - a component of the system - can use multiple subscriptions with one subscriptions for each category of events. 
+A subscriber - a component of the system - can use multiple subscriptions, with one subscriptions for each category of events. 
 Subscriptions do not know publications. The ony thing that publications and subscriptions share are the event categories (the `eventCode`). 
 
 This demo uses Quarkus (www.quarkus.io) (and not SpringBoot). No special reason for that; it's just because I wanted to play with Quarkus !
@@ -33,34 +33,34 @@ cd broker
 java -jar target/events-websockets-quarkus-broker-1.0-SNAPSHOT-runner.jar
 ```
 
-In a terminal, start a publication (named `pubA1`) for events of category `eventA`:
+In a terminal, start a publication for events of category `eventA`:
 ```
-wscat -c localhost:8080/events/eventA/publications/pubA1
-```
-
-In another terminal, start a first subscription (named `subA1`) for events of category `eventA`:
-```
-wscat -c localhost:8080/events/eventA/subscriptions/subA1
+wscat -c localhost:8080/events/eventA/publications
 ```
 
-In another terminal, start a second subscription (named `subA1`) for events of category `eventA`:
+In another terminal, start a first subscription for events of category `eventA`:
 ```
-wscat -c localhost:8080/events/eventA/subscriptions/subA2
-```
-
-In another terminal, start a publication (named `pubB1`) for events of category `eventB`:
-```
-wscat -c localhost:8080/events/eventB/publications/pubB1
+wscat -c localhost:8080/events/eventA/subscriptions
 ```
 
-In another terminal, start a first subscription (named `subB1`) for events of category `eventB`:
+In another terminal, start a second subscription for events of category `eventA`:
 ```
-wscat -c localhost:8080/events/eventB/subscriptions/subB1
+wscat -c localhost:8080/events/eventA/subscriptions
 ```
 
-In another terminal, start a second subscription (named `subB2`) for events of category `eventB`:
+In another terminal, start a publication for events of category `eventB`:
 ```
-wscat -c localhost:8080/events/eventB/subscriptions/subA2
+wscat -c localhost:8080/events/eventB/publications
+```
+
+In another terminal, start a first subscription for events of category `eventB`:
+```
+wscat -c localhost:8080/events/eventB/subscriptions
+```
+
+In another terminal, start a second subscription for events of category `eventB`:
+```
+wscat -c localhost:8080/events/eventB/subscriptions
 ```
  
 In the terminal of the publication for events of category `eventA`, type a message. 
@@ -108,14 +108,14 @@ java -jar target/events-websockets-quarkus-broker-1.0-SNAPSHOT-runner.jar
 
 ### Test
 
-In a terminal, start a publication (named `pubA1`) for events of category `eventA`:
+In a terminal, start a publication for events of category `eventA`:
 ```
-wscat -c localhost:8080/events/eventA/publications/pubA1
+wscat -c localhost:8080/events/eventA/publications
 ```
 
-In another terminal, start a subscription (named `subA1`) for events of category `eventA`:
+In another terminal, start a subscription for events of category `eventA`:
 ```
-wscat -c localhost:8080/events/eventA/subscriptions/subA1
+wscat -c localhost:8080/events/eventA/subscriptions
 ```
 
 Type some message in the terminal of the publication and check that the message is diplayed in the terminal of the subscription.  

@@ -11,21 +11,21 @@ public class PublisherWebSocketClient {
 
     @OnOpen
     public void onOpen(Session session) {
-        LOG.info("PublisherWebSocketClient.open() for session " + session.getId());
+        LOG.info("Publication " + session.getId() + " joined");
     }
 
     @OnClose
     public void onClose(Session session) {
-        LOG.info("PublisherWebSocketClient.close() for session " + session.getId());
+        LOG.info("Publication " + session.getId() + " left");
     }
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        LOG.error("PublisherWebSocketClient.error() for session " + session.getId(), throwable);
+        LOG.error("Publication " + session.getId() + " thrown error " + throwable.getMessage(), throwable);
     }
 
     @OnMessage
-    void message(Session session, String message) {
-        LOG.info("PublisherWebSocketClient.message(" + message + ") for session " + session.getId());
+    void onMessage(Session session, String message) {
+        LOG.info("(onMessage) Publication " + session.getId() + " received: " + message);
     }
 }

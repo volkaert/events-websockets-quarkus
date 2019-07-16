@@ -26,15 +26,16 @@ public class SubscriberController {
     Map<String, Session> sessionsMap = new ConcurrentHashMap<>();
 
     @POST
-    @Path("/{eventCode}/subscriptions/{subscriptionCode}")
-    // Example using curl: curl -X POST http://localhost:8082/events/eventA/subscriptions/subA1
-    public void subscribe(@PathParam("eventCode") String eventCode, @PathParam("subscriptionCode") String subscriptionCode) {
-        String sessionKey = eventCode + "-" + subscriptionCode;
+    @Path("/{eventCode}/subscriptions")
+    // Example using curl: curl -X POST http://localhost:8082/events/eventA/subscriptions
+    public void subscribe(@PathParam("eventCode") String eventCode) {
+        String sessionKey = eventCode;
         Session session = sessionsMap.get(sessionKey);
         if (session == null) {
-            String wsURL = wsAddress + "/events/" + eventCode + "/subscriptions/" + subscriptionCode;
+            String wsURL = wsAddress + "/events/" + eventCode + "/subscriptions";
             try {
                 session = ContainerProvider.getWebSocketContainer().connectToServer(SubscriberWebSocketClient.class, URI.create(wsURL));
+                LOG.info("(subscribe) Subscription " + session.getId() + " for event " + eventCode + " joined");
             } catch (Exception ex) {
                 LOG.error("Error while connecting to the WebSockets Server at " + wsURL + ": " + ex.getMessage(), ex);
                 throw new RuntimeException(ex);
@@ -44,10 +45,10 @@ public class SubscriberController {
     }
 
     @GET // For tests only (typically to ease subscription from the navigation bar of a browser)
-    @Path("/{eventCode}/subscriptions/{subscriptionCode}")
-    // Example (from the navigation bar of a browser): http://localhost:8082/events/eventA/subscriptions/subA1
-    public void subscribeUsingGETForTestsOnly(@PathParam("eventCode") String eventCode, @PathParam("subscriptionCode") String subscriptionCode) {
-        subscribe(eventCode, subscriptionCode);
+    @Path("/{eventCode}/subscriptions")
+    // Example (from the navigation bar of a browser): http://localhost:8082/events/eventA/subscriptions
+    public void subscribeUsingGETForTestsOnly(@PathParam("eventCode") String eventCode) {
+        subscribe(eventCode);
     }
 }
 

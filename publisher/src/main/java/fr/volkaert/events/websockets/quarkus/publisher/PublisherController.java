@@ -1,5 +1,7 @@
 package fr.volkaert.events.websockets.quarkus.publisher;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
@@ -20,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PublisherController {
 
     private static final Logger LOG = Logger.getLogger(PublisherController.class);
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @ConfigProperty(name = "ws.address")
     String wsAddress;
@@ -27,18 +30,19 @@ public class PublisherController {
     Map<String, Session> sessionsMap = new ConcurrentHashMap<>();
 
     @POST
-    // Example using curl: curl -d '{"eventCode":"eventA", "publicationCode":"pubA1", "payload":"helloA"}' -H "Content-Type: application/json" -X POST http://localhost:8081/events
+    // Example using curl: curl -d '{"eventCode":"eventA", "payload":"helloA"}' -H "Content-Type: application/json" -X POST http://localhost:8081/events
     public Event publish(Event eventToPublish) {
         if (eventToPublish.id == null) {    // do not overwrite existing id explicitly set by the publisher
             eventToPublish.id = UUID.randomUUID().toString();
         }
 
-        String sessionKey = eventToPublish.eventCode + "-" + eventToPublish.publicationCode;
+        String sessionKey = eventToPublish.eventCode;
         Session session = sessionsMap.get(sessionKey);
         if (session == null) {
-            String wsURL = wsAddress + "/events/" + eventToPublish.eventCode + "/publications/" + eventToPublish.publicationCode;
+            String wsURL = wsAddress + "/events/" + eventToPublish.eventCode + "/publications";
             try {
                 session = ContainerProvider.getWebSocketContainer().connectToServer(PublisherWebSocketClient.class, URI.create(wsURL));
+                LOG.info("(publish) Publication " + session.getId() + " for event " + eventToPublish.eventCode + " joined");
             } catch (Exception ex) {
                 LOG.error("Error while connecting to the WebSockets Server at " + wsURL + ": " + ex.getMessage(), ex);
                 throw new RuntimeException(ex);
@@ -46,8 +50,9 @@ public class PublisherController {
             sessionsMap.put(sessionKey, session);
         }
 
-        LOG.info("Publish event to the websocket (payload: " + eventToPublish.payload + ")");
-        session.getAsyncRemote().sendObject(eventToPublish);
+        LOG.info("(publish) Publication " + session.getId() + " for event " + eventToPublish.eventCode + " published: " + eventToPublish.payload);
+        String eventToStringAsJSONString = GSON.toJson(eventToPublish);
+        session.getAsyncRemote().sendText(eventToStringAsJSONString);
 
         Event publishedEvent = new Event(eventToPublish);
         publishedEvent.payload = null;  // remove the payload from the response to preserve bandwidth
@@ -55,10 +60,10 @@ public class PublisherController {
     }
 
     @GET // For tests only (typically to ease publication from the navigation bar of a browser)
-    @Path("/{eventCode}/publications/{publicationCode}")
-    // Example (from the navigation bar of a browser): http://localhost:8081/events/eventA/publications/pubA1?payload=helloA
-    public Event publishUsingGETForTestsOnly(@PathParam("eventCode") String eventCode, @PathParam("publicationCode") String publicationCode,  @QueryParam("payload") String payload) {
-        Event eventToPublish = new Event(eventCode, publicationCode, payload);
+    @Path("/{eventCode}/publications")
+    // Example (from the navigation bar of a browser): http://localhost:8081/events/eventA/publications?payload=helloA
+    public Event publishUsingGETForTestsOnly(@PathParam("eventCode") String eventCode, @QueryParam("payload") String payload) {
+        Event eventToPublish = new Event(eventCode, payload);
         Event publishedEvent = publish(eventToPublish);
         return publishedEvent;
     }

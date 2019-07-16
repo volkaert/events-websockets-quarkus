@@ -11,21 +11,22 @@ public class SubscriberWebSocketClient {
 
     @OnOpen
     public void onOpen(Session session) {
-        LOG.info("SubscriberWebSocketClient.open() for session " + session.getId());
+        LOG.info("Subscription " + session.getId() + " joined");
     }
 
     @OnClose
     public void onClose(Session session) {
-        LOG.info("SubscriberWebSocketClient.close() for session " + session.getId());
+        LOG.info("Subscription " + session.getId() + " left");
     }
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        LOG.error("SubscriberWebSocketClient.error() for session " + session.getId(), throwable);
+        LOG.error("Subscription " + session.getId() + " thrown error " + throwable.getMessage(), throwable);
     }
 
     @OnMessage
-    void message(Session session, String message) {
-        LOG.info("SubscriberWebSocketClient.message(" + message + ") for session " + session.getId());
+    void onMessage(Session session, String message) {
+        LOG.info("(onMessage) Subscription " + session.getId() + " received: " + message);
     }
+
 }
