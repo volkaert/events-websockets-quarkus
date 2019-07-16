@@ -75,7 +75,7 @@ Check the message is displayed in the terminals of the two subscriptions for eve
 
 # Pre-requisites
 
-## Install WSCat
+## Install WSCat
 
 `wscat` is a NodeJS utility used to send and display messages sent/received via websockets (and not regular HTTP REST/JSON API).
   
