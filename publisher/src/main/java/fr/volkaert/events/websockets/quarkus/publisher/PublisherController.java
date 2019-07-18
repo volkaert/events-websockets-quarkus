@@ -44,7 +44,7 @@ public class PublisherController {
                 session = ContainerProvider.getWebSocketContainer().connectToServer(PublisherWebSocketClient.class, URI.create(wsURL));
                 LOG.info("(publish) Publication {} for event {} joined", session.getId(), eventToPublish.eventCode);
             } catch (Exception ex) {
-                LOG.error("Error while connecting to the WebSockets Server at {}: ", wsURL, ex);
+                LOG.error("Error while connecting to the WebSockets Server at {}: {}", wsURL, ex.getMessage(), ex);
                 throw new RuntimeException(ex);
             }
             sessionsMap.put(sessionKey, session);

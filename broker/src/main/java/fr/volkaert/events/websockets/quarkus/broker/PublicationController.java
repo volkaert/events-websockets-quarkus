@@ -31,7 +31,7 @@ public class PublicationController {
 
     @OnError
     public void onError(Session session, Throwable throwable, @PathParam("eventCode") String eventCode) {
-        LOG.error("Publication {} for event {} thrown error {}", session.getId(), eventCode, throwable);
+        LOG.error("Publication {} for event {} thrown error {}", session.getId(), eventCode, throwable.getMessage(), throwable);
     }
 
     @OnMessage

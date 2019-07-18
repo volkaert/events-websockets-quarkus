@@ -22,7 +22,7 @@ public class PublisherWebSocketClient {
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        LOG.error("Publication {} thrown error {}", session.getId(), throwable);
+        LOG.error("Publication {} thrown error {}", session.getId(), throwable.getMessage(), throwable);
     }
 
     @OnMessage

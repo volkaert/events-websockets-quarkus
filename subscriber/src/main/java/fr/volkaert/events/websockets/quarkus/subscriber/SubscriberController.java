@@ -37,7 +37,7 @@ public class SubscriberController {
                 session = ContainerProvider.getWebSocketContainer().connectToServer(SubscriberWebSocketClient.class, URI.create(wsURL));
                 LOG.info("(subscribe) Subscription {} for event {} joined", session.getId(), eventCode);
             } catch (Exception ex) {
-                LOG.error("Error while connecting to the WebSockets Server at {}: {}", wsURL, ex);
+                LOG.error("Error while connecting to the WebSockets Server at {}: {}", wsURL, ex.getMessage(), ex);
                 throw new RuntimeException(ex);
             }
             sessionsMap.put(sessionKey, session);

@@ -22,7 +22,7 @@ public class SubscriberWebSocketClient {
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        LOG.error("Subscription {} thrown error {}", session.getId(), throwable);
+        LOG.error("Subscription {} thrown error {}", session.getId(), throwable.getMessage(), throwable);
     }
 
     @OnMessage

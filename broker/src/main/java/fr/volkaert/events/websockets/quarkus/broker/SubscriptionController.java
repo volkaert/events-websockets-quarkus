@@ -56,7 +56,7 @@ public class SubscriptionController {
             sessionIdsForThisEventCode.remove(session.getId());
         }
 
-        LOG.error("Subscription {} for event {} thrown error {}", session.getId(), eventCode, throwable);
+        LOG.error("Subscription {} for event {} thrown error {}", session.getId(), eventCode, throwable.getMessage(), throwable);
     }
 
     @OnMessage
