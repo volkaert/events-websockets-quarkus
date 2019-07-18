@@ -3,13 +3,13 @@ package fr.volkaert.events.websockets.quarkus.publisher;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.ContainerProvider;
 import javax.websocket.Session;
 import javax.ws.rs.*;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @ApplicationScoped
 public class PublisherController {
 
-    private static final Logger LOG = Logger.getLogger(PublisherController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PublisherController.class);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @ConfigProperty(name = "ws.address")
@@ -42,15 +42,15 @@ public class PublisherController {
             String wsURL = wsAddress + "/events/" + eventToPublish.eventCode + "/publications";
             try {
                 session = ContainerProvider.getWebSocketContainer().connectToServer(PublisherWebSocketClient.class, URI.create(wsURL));
-                LOG.info("(publish) Publication " + session.getId() + " for event " + eventToPublish.eventCode + " joined");
+                LOG.info("(publish) Publication {} for event {} joined", session.getId(), eventToPublish.eventCode);
             } catch (Exception ex) {
-                LOG.error("Error while connecting to the WebSockets Server at " + wsURL + ": " + ex.getMessage(), ex);
+                LOG.error("Error while connecting to the WebSockets Server at {}: ", wsURL, ex);
                 throw new RuntimeException(ex);
             }
             sessionsMap.put(sessionKey, session);
         }
 
-        LOG.info("(publish) Publication " + session.getId() + " for event " + eventToPublish.eventCode + " published: " + eventToPublish.payload);
+        LOG.info("(publish) Publication {} for event {} published: {}", session.getId(), eventToPublish.eventCode, eventToPublish.payload);
         String eventToStringAsJSONString = GSON.toJson(eventToPublish);
         session.getAsyncRemote().sendText(eventToStringAsJSONString);
 

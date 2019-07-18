@@ -1,7 +1,8 @@
 package fr.volkaert.events.websockets.quarkus.subscriber;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.ContainerProvider;
@@ -9,7 +10,6 @@ import javax.websocket.Session;
 import javax.ws.rs.*;
 import java.net.URI;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Path("/events")
@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @ApplicationScoped
 public class SubscriberController {
 
-    private static final Logger LOG = Logger.getLogger(SubscriberController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SubscriberController.class);
 
     @ConfigProperty(name = "ws.address")
     String wsAddress;
@@ -35,9 +35,9 @@ public class SubscriberController {
             String wsURL = wsAddress + "/events/" + eventCode + "/subscriptions";
             try {
                 session = ContainerProvider.getWebSocketContainer().connectToServer(SubscriberWebSocketClient.class, URI.create(wsURL));
-                LOG.info("(subscribe) Subscription " + session.getId() + " for event " + eventCode + " joined");
+                LOG.info("(subscribe) Subscription {} for event {} joined", session.getId(), eventCode);
             } catch (Exception ex) {
-                LOG.error("Error while connecting to the WebSockets Server at " + wsURL + ": " + ex.getMessage(), ex);
+                LOG.error("Error while connecting to the WebSockets Server at {}: {}", wsURL, ex);
                 throw new RuntimeException(ex);
             }
             sessionsMap.put(sessionKey, session);
