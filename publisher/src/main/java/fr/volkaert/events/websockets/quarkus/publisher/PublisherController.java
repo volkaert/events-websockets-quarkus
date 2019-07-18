@@ -51,8 +51,8 @@ public class PublisherController {
         }
 
         LOG.info("(publish) Publication {} for event {} published: {}", session.getId(), eventToPublish.eventCode, eventToPublish.payload);
-        String eventToStringAsJSONString = GSON.toJson(eventToPublish);
-        session.getAsyncRemote().sendText(eventToStringAsJSONString);
+        String eventToPublishAsJSONString = GSON.toJson(eventToPublish);
+        session.getAsyncRemote().sendText(eventToPublishAsJSONString);
 
         Event publishedEvent = new Event(eventToPublish);
         publishedEvent.payload = null;  // remove the payload from the response to preserve bandwidth
