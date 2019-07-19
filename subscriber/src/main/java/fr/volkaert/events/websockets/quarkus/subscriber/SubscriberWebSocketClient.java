@@ -1,5 +1,7 @@
 package fr.volkaert.events.websockets.quarkus.subscriber;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +11,7 @@ import javax.websocket.*;
 public class SubscriberWebSocketClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriberWebSocketClient.class);
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
@@ -28,6 +31,6 @@ public class SubscriberWebSocketClient {
     @OnMessage
     void onMessage(Session session, String message) {
         LOG.info("(onMessage) Subscription {} received: {}", session.getId(), message);
+        // Event event = GSON.fromJson(message, Event.class);
     }
-
 }
